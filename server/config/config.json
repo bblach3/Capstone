@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "ejxholrj",
+    "password": "1hMSEqkmyjSE2q4rnQCmDYKKwDd8smh8",
+    "database": "ejxholrj",
+    "host": "batyr.db.elephantsql.com",
+    "dialect": "postgres"
+  }
+}
+  
