@@ -23,11 +23,10 @@
 - [Challenges and Solutions](#challenges-and-solutions)
 - [Code Snippets](#code-snippets)
 - [Screenshots](#screenshots)
-
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
-We cloned web site for Fisker company that sells luxury plug-in electric vehicles. 
+We cloned the web site for Fisker company that sells luxury plug-in electric vehicles. 
 
 ## Built With
 <strong> Tech: </strong>
@@ -53,10 +52,10 @@ Clone the Fisker website with the folowing implementations:
 - Home page
 - Sign-up page
 - Log-in page
-- Store page
+- Store page connecting to back end displaying the products
 - About Us page
 - fully functioning log-in authentication connected to the back-end database 
-- shopping cart for the store page
+- shopping cart for the store page connected to products table in database
 ## Stretch Goals
 - Finish connecting orders to users and products based on the database associations through back-end
 - Creating a fully functioning checkout component for the shopping cart
@@ -70,76 +69,97 @@ Clone the Fisker website with the folowing implementations:
 ## Code Snippets
 ```sh
 ** DYNAMIC USER INTERFACE CODE **
-function showFullMediaContent(result) {
-    console.log(result)
-    // EXTRACT RESULTS & SET BACKUP IF FAILURE
-    const tmdbId = result.id || '0';
-    const title = result.title || result.name || 'Unknown';
-    const tagline = result.tagline || `NO. SEASONS: ${result.number_of_seasons}  ~  NO. EPISODES: ${result.number_of_episodes}` || '';
-    const overview = result.overview || '';
-    const rating = result.vote_average || '0';
-    let date = result.release_date || result.first_air_date || '';
-    let status = result.status || '';
-    let backdrop = `${BACKDROP}${result.backdrop_path}`;
-    let poster = `${POSTER}${result.poster_path}`;
-    let trailer = [];
-    let linktext = '';
-    let streamLink = '';
-    let streamService = '';
-    let runTime = result.runtime + ' Minutes';
-    try {
-        linktext = result['watch/providers'].results.US.flatrate[0].provider_name;
-        streamLink = POSTER + result['watch/providers'].results.US.flatrate[0].logo_path;
-        streamService = result.homepage;
-    } catch (error) {
-        linktext = title;
-        streamLink = 'images/vudu.png'
-        streamService = 'https://www.vudu.com'
-    }
-    // CHANGE DATE TO EUROPEAN FORMAT
-    // IF ARTWORK FAILS, SET THE DEFAULT ARTWORK
-    if (date) date = date.split('-').reverse().join('-');
-    if (result.backdrop_path == null) backdrop = DEFAULT_BACKDROP;
-    if (result.poster_path == null) poster = DEFAULT_POSTER;
-    // GET TRAILER & GET FOR UNDEFINED
-    // RETURN NEW ARRAY AND FILTER BASED ON VIDEO TYPE
-    if (result.videos.results.length != 0) {
-        trailer = result.videos.results.map(video => {
-            if (video.type == 'Trailer') {
-                return `https://www.youtube.com/watch?v=${video.key}`;
+
+//BACKGROUND VIDEO
+const BackgroundVideo = () => {
+    
+ const video = React.useRef(null);
+  React.useEffect(() => {
+    console.log(video.current.style);
+    video.current.style.filter = "blur(10px)";
+  }, []);
+
+    return <>
+
+    <div className='container'>
+        <video
+          style={{ filter: `blur(${blur}px)`, WebkitFilter: `blur(${blur}px)` }}
+          autoPlay="autoplay"
+          loop="loop"
+          muted
+          // ref={video}
+          id="video-id"
+          className='video' >
+          {/* TODO make it accept multiple media types */}
+          <source src={videoSource} type="video/mp4" />
+            Your browser does not support the video tag.
+      </video>
+        {children}
+      </div>
+
+    </>
+}
+
+    // REDUCER LOGIC FOR THE SHOPPING CART
+    const cartReducer = (state, action) => {
+  if (state == null) {
+    state = {
+        cartItems: [],
+        numberOfItems: 0,
+        totalCost: parseFloat(0.00)
+    };
+  }
+
+  switch (action.type) { //action.product
+
+    case ADD_TO_CART:
+        console.log("price add", action.product.price)
+        let newCartItems = [...state.cartItems];
+        let isFound = false;
+
+        newCartItems.forEach(product =>{
+            if(product.id === action.product.id){
+                product.count++;
+                isFound = true;
             }
-        }).filter(video => {
-            if (video != 'undefined') {
-                return video;
-            }
-        });
-    }
-    // IF NO TRAILERS EXIST - REDIRECT TO YOUTUBE WITH QUERY
-    else {
-        trailer[0] = `https://www.youtube.com/results?search_query=${title}`;
-    }
-    // CREATE HTML TO RETURN
-    fullMediaContent.innerHTML = `
-        <p class="content-title">MEDIA DETAILS
-            <i class="material-icons close-media-content" onclick="resetFullMediaContent(); checkIfCollectionChanged(${tmdbId})">close</i>
-        </p>
-        <!-- MEDIA BACKDROP -->
-        <div id="media-showcase" style="background-image: url('${backdrop}')">
-            <a class="download-fanart" href="${backdrop}"target="_blank">DOWNLOAD WALLPAPER<br/>
-                <i class="material-icons download-icon">cloud_download</i>
-            </a>
-            <h1 id="media-title">${title}</h1>
-            <a href="${streamService}" class="streamService" target="_blank">
-            <img width="8%" id="streamer" src="${streamLink}" alt="${linktext}">
-            </a>
-        </div>
-        <!-- MEDIA DETAILS -->
-        <div id="media-details">
-            <img width="140" id="media-poster" src="${poster}" alt="${title}">
-            <div id="media-details-bar">
-                <a href="${trailer[0]}" target=_blank">Trailer</a>
-                <span>${rating}</span><span>${status}</span><span>${date}</span><span>${runTime}</span>
-                <span class="from-collection" onclick="updateList(${tmdbId},'#from-full-media-collection')">Add/Remove from Collection</span>
+        })
+
+        if(!isFound){
+            newCartItems.push({...action.product, count:1})
+        }
+
+        console.log("totalcost", state.totalCost + parseFloat(action.product.price))
+        return {
+            ...state,
+            cartItems: newCartItems,
+            numberOfItems: state.numberOfItems + 1,
+            totalCost: state.totalCost + parseFloat(action.product.price)
+        }
+
+
+        case REMOVE_FROM_CART:
+        console.log("price remove", action.product.price)
+        let oldCartItems = [...state.cartItems];
+        let newCart = oldCartItems.filter(cartItems => cartItems.id !== action.product.id);
+
+        console.log("oldCartItems", oldCartItems)
+        console.log("newCart", newCart)
+        console.log("totalcost after remove", state.totalCost - parseFloat(action.product.price))
+        return {
+            ...state,
+            cartItems: newCart,
+            numberOfItems: state.numberOfItems - 1,
+            totalCost: state.totalCost - parseFloat(action.product.price)
+            
+        }
+
+
+    default:
+      return state;
+  }
+};
+
+export default cartReducer
 ```
 ## Screenshots
 Homepage
