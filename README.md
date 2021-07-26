@@ -23,10 +23,13 @@
 - [Challenges and Solutions](#challenges-and-solutions)
 - [Code Snippets](#code-snippets)
 - [Screenshots](#screenshots)
+
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 We cloned web site for Fisker company that sells luxury plug-in electric vehicles. 
-### Built With
+
+## Built With
 <strong> Tech: </strong>
 - HTML 
 - React Redux
