@@ -163,14 +163,6 @@ export default cartReducer
 ```
 ## Screenshots
 Homepage
-<img src="images/homepage.png" alt="homepage" width="100%" height="782">
+<img src="seeders/images/home.png" alt="homepage" width="100%" height="782">
 Search feature
-<img src="images/searchingFindingNemo.png" alt="search" width="100%" height="432">
-Search results
-<img src="images/resultsFindingNemo.png" alt="searchMovieResults" width="100%" height="782">
-Link to streaming service where movie is available
-<img src="images/Disney+FindingNemo.png" alt="Disney+" width="100%" height="782">
-TV show search results
-<img src="images/searchTVShow.png" alt="tvShows" width="100%" height="782px">
-Example of the list feature
-<img src="images/listExample.png" alt="list" width="100%" height="432">
+<img src="images/store.png" alt="search" width="100%" height="432">
