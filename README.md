@@ -163,6 +163,6 @@ export default cartReducer
 ```
 ## Screenshots
 Homepage
-<img src="Capstone2/seeders/images/home.png" alt="homepage" width="100%" height="782">
+<img src="seeders/images/home.png" alt="homepage" width="100%" height="782">
 Search feature
 <img src="images/store.png" alt="search" width="100%" height="432">
